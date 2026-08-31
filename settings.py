@@ -115,6 +115,9 @@ COLOR_SCIENTIST_COAT = (250, 250, 245)     # white lab coat
 COLOR_SCIENTIST_ACCENT = (60, 130, 200)    # gloves/glasses accent color
 
 # --- Level 2 "CAR Puzzle": drag-and-drop assembly ---
+# Redesigned to look like an actual CAR receptor cross-section (scFv "arms"
+# above a membrane, a hinge+transmembrane segment crossing it, then the
+# intracellular signaling domains below) instead of plain labeled boxes.
 COLOR_PUZZLE_BG = (24, 26, 34)
 COLOR_OUTLINE = (90, 96, 110)              # the empty receptor outline/slots
 COLOR_SLOT_CORRECT = (70, 190, 110)        # slot lights up green when solved
@@ -129,9 +132,13 @@ COLOR_DOMAIN_HINGE_TM = (90, 190, 230)
 COLOR_DOMAIN_COSTIM = (200, 120, 220)
 COLOR_DOMAIN_CD3ZETA = (240, 120, 90)
 
-PUZZLE_PIECE_SIZE = (140, 46)   # width, height of a draggable piece
-PUZZLE_SLOT_SIZE = (150, 50)    # slightly larger than a piece, so it visibly "fits"
 PUZZLE_WRONG_FLASH_FRAMES = 20  # how long a slot flashes red on a wrong drop
+
+# --- Cell membrane visual (drawn behind the slots, between the
+# extracellular scFv "arms" and the intracellular domains) ---
+COLOR_MEMBRANE_FILL = (58, 66, 92)
+COLOR_MEMBRANE_LINE = (120, 150, 200)
+COLOR_MEMBRANE_HEAD = (150, 178, 220)
 
 # --- Level 3 "CAR-T Cell Fight" (simplified): multiple cancer cells ---
 # No shield/shooting anymore - touching a cancer cell starts an automatic
