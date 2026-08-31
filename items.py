@@ -1,9 +1,4 @@
-"""Collectible CAR receptor components and the boss-arena gate.
-
-Components act as the level's "keys": once all four are collected, they
-auto-assemble into a working CAR receptor (see Player.car_complete), which
-unlocks the gate to the boss arena and can then be fired as a weapon.
-"""
+"""Collectible CAR receptor components and the boss-arena gate."""
 from __future__ import annotations
 
 import math
@@ -15,12 +10,7 @@ from settings import COLOR_ITEM_CORE, COLOR_ITEM_GLOW, TILE_SIZE, COLOR_GATE_LOC
 
 
 class CarComponent:
-    """A single collectible piece of the CAR receptor.
-
-    `key` is a short machine-readable id (e.g. "scfv"), used to track which
-    parts the player has collected. `name` and `lines` hold the
-    human-readable text shown in the pickup pop-up.
-    """
+    """A single collectible piece of the CAR receptor."""
 
     def __init__(self, col: int, row: int, maze, key: str, name: str, lines: List[str]):
         self.x, self.y = maze.cell_center_px(col, row)
@@ -39,8 +29,6 @@ class CarComponent:
         if self.collected:
             return
         ox, oy = camera_offset
-        # Gentle up/down float plus a soft pulsing glow - makes pickups
-        # feel alive instead of static, without adding a new mechanic.
         bob = math.sin(ticks / 300.0 + self._phase) * 4
         pulse = 0.5 + 0.5 * math.sin(ticks / 200.0 + self._phase)
         draw_x, draw_y = int(self.x - ox), int(self.y - oy + bob)
@@ -54,13 +42,7 @@ class CarComponent:
 
 
 class BossGate:
-    """Marks the entrance to the boss arena.
-
-    Purely visual - the actual blocking logic (staying locked until all 4
-    components are collected) is handled in main.py via a simple rect
-    check, since the arena itself is just another open room in the maze
-    grid rather than a separate scene.
-    """
+    """Marks the entrance to the boss arena."""
 
     def __init__(self, col: int, row: int, maze):
         self.x, self.y = maze.cell_center_px(col, row)

@@ -1,9 +1,6 @@
-"""Player character for Level 1: a scientist walking around the lab.
+"""Player character for Level 1: a scientist walking around the lab."""
 
-Simpler than the Level 3 player - no CAR receptor to fire, no health, just
-movement and a record of which CAR components have been collected so far
-(used to decide when the level is complete).
-"""
+
 from __future__ import annotations
 
 from typing import Set
@@ -18,7 +15,6 @@ class LabPlayer:
         self.x = x
         self.y = y
         self.size = PLAYER_SIZE
-        # Keys of the CAR components collected so far, e.g. {"scfv", "hinge_tm"}.
         self.collected_items: Set[str] = set()
 
     @property
@@ -26,8 +22,7 @@ class LabPlayer:
         return pygame.Rect(int(self.x - self.size / 2), int(self.y - self.size / 2), self.size, self.size)
 
     def handle_input(self, keys, maze) -> None:
-        """Move in all 4 directions - no gravity, no jumping (same movement
-        rules as every other character in this game)."""
+        """Move in all 4 directions - no gravity, no jumping."""
         dx = dy = 0
         if keys[pygame.K_LEFT]:
             dx -= PLAYER_SPEED
@@ -55,9 +50,7 @@ class LabPlayer:
             self.y = new_y
 
     def draw(self, surface: pygame.Surface, camera_offset) -> None:
-        """A simple stand-in sprite: a white lab-coat body with a small
-        accent-colored 'safety glasses' stripe, drawn from above. Swap this
-        for pygame.image.load(...) once real character art is available."""
+        """player design. """
         ox, oy = camera_offset
         rect = self.rect.move(-ox, -oy)
         pygame.draw.rect(surface, COLOR_SCIENTIST_COAT, rect, border_radius=6)

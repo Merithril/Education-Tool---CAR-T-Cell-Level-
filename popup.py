@@ -1,11 +1,6 @@
-"""Pop-up dialog system with pagination and a clickable "Understood" button.
+"""Pop-up dialog system with pagination and a clickable "Understood" button. """
 
-Used for the level intro, the Cancer Cell 1 encounter (a short multi-slide
-sequence), each CAR component pickup, and the closing recap after the
-boss fight. The player can confirm either with the mouse (click the
-button) or the keyboard (Enter/Space), per the concept's request for a
-clickable confirmation button.
-"""
+
 from __future__ import annotations
 
 from typing import List, Union
@@ -20,12 +15,7 @@ from settings import (
 
 
 class Popup:
-    """A modal pop-up window.
-
-    `pages` is either a flat list of text lines (a single-page pop-up) or
-    a list of pages, each itself a list of lines (a multi-slide pop-up,
-    e.g. for the Cancer Cell 1 introduction).
-    """
+    """A modal pop-up window."""
 
     def __init__(self, pages: Union[List[str], List[List[str]]], font: pygame.font.Font):
         if pages and isinstance(pages[0], str):
@@ -56,13 +46,7 @@ class Popup:
                 self._advance()
 
     def _wrap_line(self, text: str, max_width: int) -> List[str]:
-        """Splits `text` into as many sub-lines as needed so each one fits
-        within `max_width` pixels at the popup's font.
-
-        This is what makes the pop-up robust to long lines: instead of
-        every line list in main.py needing to be hand-wrapped to fit a
-        specific box size, any text - however long - now wraps itself.
-        """
+        """text formation in pop-ups."""
         words = text.split(" ")
         lines: List[str] = []
         current = ""
@@ -88,9 +72,6 @@ class Popup:
         line_height = 30
         y = padding
         for raw_line in self.pages[self.page_index]:
-            # An empty string is used as a deliberate blank spacer line
-            # (see e.g. the CAR-assembly-complete pop-ups) - keep it as-is
-            # instead of wrapping (which would just drop it).
             wrapped = self._wrap_line(raw_line, max_text_width) if raw_line else [""]
             for sub_line in wrapped:
                 text_surf = self.font.render(sub_line, True, COLOR_TEXT)
@@ -110,14 +91,11 @@ class Popup:
 
         origin_x, origin_y = (SCREEN_WIDTH - box_w) // 2, (SCREEN_HEIGHT - box_h) // 2
         surface.blit(box, (origin_x, origin_y))
-        # Store the button's position in screen space (not box-local space)
-        # so mouse clicks can be compared against it directly.
         self.button_rect = button_local.move(origin_x, origin_y)
 
 
 class PopupTrigger:
-    """An invisible zone that opens a Popup the first time the player
-    enters it. Currently used for the Cancer Cell 1 encounter."""
+    """Implement pop-up trigger."""
 
     def __init__(self, rect: pygame.Rect, pages: Union[List[str], List[List[str]]]):
         self.rect = rect

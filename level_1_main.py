@@ -1,24 +1,5 @@
-"""Level 1: "Welcome to the Lab".
+"""Level 1: "Welcome to the Lab"."""
 
-Goal (from the concept doc): collect all 4 CAR parts in a lab setting.
-Theory: represents the manufacturing stage of CAR-T therapy - the
-patient's T cells have just been isolated via leukapheresis and shipped
-to a lab, where a viral vector will insert the CAR gene.
-
-Game logic: the player (a scientist, top-down view) walks through a
-lab-themed maze and collects the 4 domains of the CAR receptor. Each
-pickup opens an info pop-up. Once all 4 are collected, a closing pop-up
-plays and the level is complete (in a full game, this would hand off to
-Level 2 - see game_launcher.py for a version that chains all 3 levels in
-one process).
-
-No NPCs and no damage in this level, per the concept doc - it's a pure,
-low-pressure scavenger hunt.
-
-To run in PyCharm: open this file and click the green "Run" arrow, or
-right-click -> Run 'level_1_main'. Needs settings.py, popup.py, maze.py,
-items.py, level_1_maze.py, and level_1_player.py in the same folder.
-"""
 from __future__ import annotations
 
 import sys
@@ -28,22 +9,19 @@ import pygame
 from settings import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, COLOR_TEXT
 from level_1_maze import LabMaze
 from level_1_player import LabPlayer
-from items import CarComponent, BossGate  # BossGate is reused here as the lab's exit door
+from items import CarComponent, BossGate
 from popup import Popup
 
-# Maze size for Level 1. Smaller than Level 3's bloodstream maze, since
-# there are no hazards here - just an exploration/collection loop.
+#Maze framework
+
 MAZE_COLS = 27
 MAZE_ROWS = 19
 
-# Exit door position - deliberately far from the start (1, 1) and from
-# all 4 item cells, so reaching it feels like a small final walk once
-# everything has been collected.
+# Exit door position
 EXIT_DOOR_CELL = (1, 17)
 
 # ---------------------------------------------------------------------------
-# Level content: where each CAR component sits, and what its pop-up says.
-# Text is adapted from "Level Concept Vol. 2" (the concept PDF).
+# Level content: position of AR components and position/timing and content of pop ups.
 # ---------------------------------------------------------------------------
 CAR_ITEMS = [
     {
@@ -164,9 +142,7 @@ def clamp_camera(player: LabPlayer, maze: LabMaze) -> tuple[int, int]:
 
 
 def draw_hud(surface: pygame.Surface, font: pygame.font.Font, player: LabPlayer) -> None:
-    """Simple collection-progress indicator - same visual language
-    (a row of small boxes) as Level 3's HUD, for consistency across
-    sublevels."""
+    """Simple collection-progress indicator."""
     label = font.render(f"CAR Parts Collected: {len(player.collected_items)}/{TOTAL_ITEMS}", True, COLOR_TEXT)
     surface.blit(label, (12, 10))
     box_size = 16
@@ -178,14 +154,7 @@ def draw_hud(surface: pygame.Surface, font: pygame.font.Font, player: LabPlayer)
 
 
 def run_level1(screen: pygame.Surface = None) -> bool:
-    """Runs Level 1 to completion.
-
-    Accepts an optional existing `screen` surface so game_launcher.py can
-    reuse one window across all three levels; if none is given (e.g. when
-    running this file directly in PyCharm), a new window is created.
-
-    Returns True if the player closed the window entirely (so a caller
-    like game_launcher.py knows to stop instead of starting Level 2), or
+    """Runs Level 1 to completion.  Returns True if the player closed the window entirely, or
     False if the level just finished normally.
     """
     owns_display = screen is None
@@ -226,18 +195,14 @@ def run_level1(screen: pygame.Surface = None) -> bool:
             player.handle_input(keys, maze)
 
             # --- CAR component pickups: every single pickup shows its own
-            # info pop-up (this was previously only happening for the
-            # pop-up shown once ALL items were collected - fixed here). ---
+            # info pop-up. ---
             for item in level["items"]:
                 if not item.collected and item.rect.colliderect(player.rect):
                     item.collected = True
                     player.collected_items.add(item.key)
                     active_popup = Popup(item.lines, font)
 
-            # --- once everything is collected, show a one-time "head to
-            # the door" pop-up, then require walking to the door itself
-            # (matches Level 3's exit-door pattern) instead of completing
-            # the level automatically on the last pickup. ---
+            # --- once everything is collected, show exit signs. ---
             all_collected = len(player.collected_items) >= TOTAL_ITEMS
             if all_collected and not level["all_collected_popup_shown"] and (
                 active_popup is None or not active_popup.active

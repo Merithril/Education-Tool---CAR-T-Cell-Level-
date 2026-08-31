@@ -1,29 +1,6 @@
-"""Maze generation and rendering in the blood-vessel style.
+"""Maze generation and rendering in the blood-vessel style. """
 
-The algorithm (recursive backtracker) generates a "perfect" maze: there is
-exactly one path between any two points. As a result, the path to a CAR
-component and the path onward from there naturally run through different
-corridors.
 
-COLLISION still runs on the rectangular tile grid (is_wall) - that does
-not change. Only the RENDERING is an organic vessel network:
-- Every walkable cell gets a "pulse radius" that shrinks with its BFS
-  distance from the start cell (the "root") - corridors near the start
-  read as a thick artery, dead ends as thin capillaries.
-- Every connection between two open neighbor cells gets a small,
-  deterministic offset (pseudo-noise) - curved corridors instead of
-  right angles.
-- The color pulses gently over time, with a wave delay based on distance
-  from the root - looks like a heartbeat spreading through the network.
-
-Code prompt for further work:
-- More levels: define a list of (cols, rows, seed) and cycle through them
-  in main.py.
-- Other maze algorithms (e.g. Kruskal, Prim) can be added here as their
-  own method.
-- For even more organic curves: increase VESSEL_CURVE_STRENGTH or add
-  more intermediate points per edge.
-"""
 from __future__ import annotations
 
 import math
@@ -49,12 +26,7 @@ Cell = Tuple[int, int]
 
 
 def _hash_noise(x: int, y: int, seed: int) -> float:
-    """Deterministic pseudo-noise in [-1, 1] for a cell coordinate.
-
-    No external package needed (saves you another pip install) - but
-    returns the same value for the same input every time, which is
-    important for stable (non-"jittering") curves across frames.
-    """
+    """Deterministic pseudo-noise in [-1, 1] for a cell coordinate."""
     n = (x * 374761393 + y * 668265263 + seed * 982451653) & 0xFFFFFFFF
     n = (n ^ (n >> 13)) * 1274126177 & 0xFFFFFFFF
     n = (n ^ (n >> 16)) & 0xFFFFFFFF
@@ -63,7 +35,6 @@ def _hash_noise(x: int, y: int, seed: int) -> float:
 
 class Maze:
     def __init__(self, cols: int, rows: int, seed: Optional[int] = None):
-        # cols/rows must be odd for the algorithm to work out cleanly
         self.cols = cols if cols % 2 == 1 else cols + 1
         self.rows = rows if rows % 2 == 1 else rows + 1
         self._seed = seed if seed is not None else random.randint(0, 999_999)
@@ -76,7 +47,7 @@ class Maze:
         self._build_vessel_layout()
 
     def _generate(self) -> None:
-        """Recursive backtracker: generates a 'perfect' maze."""
+        """Recursive backtracker: generates maze."""
         stack = [(1, 1)]
         self.grid[1][1] = False
         while stack:
@@ -96,11 +67,7 @@ class Maze:
 
     def carve_room(self, cx: int, cy: int, w: int, h: int) -> None:
         """Opens up a rectangular room, e.g. for a hazard cluster or the
-        boss arena.
-
-        Important: this recomputes the vessel layout afterwards, since the
-        set of open cells has changed.
-        """
+        boss arena."""
         for y in range(cy, cy + h):
             for x in range(cx, cx + w):
                 if 0 <= y < self.rows and 0 <= x < self.cols:
@@ -121,7 +88,7 @@ class Maze:
     # Blood-vessel layout
     # ------------------------------------------------------------------
     def _build_vessel_layout(self) -> None:
-        """Computes nodes (cells) and edges (connections) as a vessel network."""
+        """Computes nodes and edges as a vessel network."""
         adjacency: Dict[Cell, List[Cell]] = {}
         for row in range(self.rows):
             for col in range(self.cols):
